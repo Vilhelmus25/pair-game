@@ -33,7 +33,12 @@ body{
     font-size: 1.5rem;
     font-weight: bold;
     text-align: center;
+    margin-top: 3rem;
+}
 
+.header__container{
+    display: flex;
+    flex-direction: column;
 }
 
 .card__container{
@@ -43,32 +48,46 @@ body{
     margin: 5rem;
     justify-content: center;
     
-}
-
-.card{
-    background-color: #eeeeee;
-    height: 175px;
-    width: 125px;
-    border-radius: 5%;
     
 }
 
-.card__front--face,.card__back--face{
-    position: absolute;
-    width: 100%;
-    height: 100%;
+.card{
+    border-radius: 5%;
+    height: 175px;
+    width: 125px;
+   
 }
 
-.card__front--face{
+.card .card__front{
+    transform: rotateY(0deg);
     visibility: hidden;
 }
 
-.card__back--face:hover,.card__front--face:hover{
-    opacity: 0.75;
-    transition: opacity 100ms ease-in-out;
+.card .card__back:hover{
+    opacity: 0.85;
+    transition: opacity 0.1 ease-in-out;
+}
+
+
+.card__front{
+    transform: rotateY(180deg);
+}
+
+.card__face{
+    position: absolute;
+   transition: transform 500ms ease-out;
+   backface-visibility: hidden;
+}
+.card__back .clicked{
+    transform: rotateY(-180deg);
+}
+.card__front .clicked{
+    transform: rotateY(180deg);
+    
 }
 
 
 .creator,.dragons,.endora,.gladius,.heavenandhell,.goblin{
     border-radius: 5%;
 }
+
