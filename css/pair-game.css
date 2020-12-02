@@ -1,0 +1,74 @@
+@font-face{
+    font-family: majorMonoDisplay;
+    src: url(MajorMonoDisplay-Regular.ttf);
+}
+
+*{
+    box-sizing: border-box;
+    font-family: majorMonoDisplay,sans-serif;
+    
+}
+
+html{
+    min-height: 100vh;
+}
+
+body{
+    margin: 0;
+    background: radial-gradient(#7c0e00, #180000) ;
+}
+
+.title{
+    color: #f7aa06;
+    text-align: center;
+}
+
+.whattodo{
+    color: #e0d53a;
+    text-align: center;
+}
+
+.clock{
+    color: #cace93;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+
+}
+
+.card__container{
+    display: grid;
+    grid-template-columns: repeat(5,auto);
+    grid-gap: 1.5rem;
+    margin: 5rem;
+    justify-content: center;
+    
+}
+
+.card{
+    background-color: #eeeeee;
+    height: 175px;
+    width: 125px;
+    border-radius: 5%;
+    
+}
+
+.card__front--face,.card__back--face{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.card__front--face{
+    visibility: hidden;
+}
+
+.card__back--face:hover,.card__front--face:hover{
+    opacity: 0.75;
+    transition: opacity 100ms ease-in-out;
+}
+
+
+.creator,.dragons,.endora,.gladius,.heavenandhell,.goblin{
+    border-radius: 5%;
+}
