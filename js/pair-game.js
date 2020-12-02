@@ -1,14 +1,30 @@
 'use strict';
 
-const cards = Array.from(document.querySelectorAll('card'));
-
-cards.forEach(elements => {
-    cards.addEventListener('click', flipCard(card));
+const cards = Array.from(document.querySelectorAll('.card__face'));
+//const cardsFront = Array.from(document.querySelectorAll('.card__front'));
+console.log(cards);
+cards.forEach((card, index) => {
+    card.addEventListener('click', () => {
+        flipCardBack(card, index);
+    });
 });
 
-function flipCard(cardArray) {
+// cardsFront.forEach(card => {
+//     card.addEventListener('click', () => {
+//         flipCardFront(card);
+//     });
+// });
+
+function flipCardBack(card, index) {
+    console.log(card);
+    card.style.transform = "rotateY(-180deg)";
 
 }
+// function flipCardFront(card) {
+//     card.style.transform = "rotateY(-180deg)";
+
+// }
+
 
 
 // da clock
@@ -21,14 +37,16 @@ function addZero(i) {           // ott ahol lehet 10-nél kisebb az érték, ott
     return i;
 }
 
-const dateObject = new Date();
+const startTimeObject = new Date();
 let ellapsedTime = 0;
 function dateForm() {
 
     const timeObject = new Date();
-    const shortLongForm = `${addZero(timeObject.getMinutes() - dateObject.getMinutes())}:${addZero(timeObject.getSeconds() - dateObject.getSeconds())}`;       // a toLocaleDateString-nek a 2. paramétere egy objektum, és ennek van egy month objektuma, aminek lehet short vagy long propertyje
+    const shortLongForm = `${addZero(timeObject.getMinutes() - startTimeObject.getMinutes())}:${addZero(timeObject.getSeconds() - startTimeObject.getSeconds())}`;       // a toLocaleDateString-nek a 2. paramétere egy objektum, és ennek van egy month objektuma, aminek lehet short vagy long propertyje
     time.textContent = shortLongForm;
-    ellapsedTime = (timeObject.getMinutes() - dateObject.getMinutes()) * 60 + (timeObject.getSeconds() - dateObject.getSeconds());
+
+    ellapsedTime = (timeObject.getMinutes() - startTimeObject.getMinutes()) * 60 + (timeObject.getSeconds() - startTimeObject.getSeconds());
+    //return shortLongForm;
 }
 
 setInterval(dateForm, 1000);            // másodpercenként frissíti így

@@ -55,12 +55,7 @@ body{
     border-radius: 5%;
     height: 175px;
     width: 125px;
-   
-}
-
-.card .card__front{
-    transform: rotateY(0deg);
-    visibility: hidden;
+   background-color: #eeeeee;
 }
 
 .card .card__back:hover{
@@ -68,23 +63,21 @@ body{
     transition: opacity 0.1 ease-in-out;
 }
 
-
-.card__front{
-    transform: rotateY(180deg);
-}
-
 .card__face{
     position: absolute;
    transition: transform 500ms ease-out;
    backface-visibility: hidden;
+  
 }
-.card__back .clicked{
-    transform: rotateY(-180deg);
-}
-.card__front .clicked{
+.card__front .card{
+
     transform: rotateY(180deg);
     
 }
+.card__back .card{
+    transform: rotateY(-180deg);
+}
+
 
 
 .creator,.dragons,.endora,.gladius,.heavenandhell,.goblin{
