@@ -1,52 +1,99 @@
 'use strict';
 
-const cards = Array.from(document.querySelectorAll('.card__face'));
+
+const backFaceCardMap = new Map();
+const frontFaceCardMap = new Map();
+
+const cards = Array.from(document.querySelectorAll('.card'));
+const backFace = Array.from(document.querySelectorAll('.card__back')).map((elements) => elements);
+const frontFace = Array.from(document.querySelectorAll('.card__front')).map((elements) => elements);
+
+console.log(arrayToMap(backFace, backFaceCardMap));
+console.log(arrayToMap(frontFace, frontFaceCardMap));
+
+function arrayToMap(arr, faceMap) {                                     // a tömböt mapba teszi
+    const tempArrayIndex = arr.map((elements, index) => index);
+    return faceMap.set(tempArrayIndex, arr);
+}
 //const cardsFront = Array.from(document.querySelectorAll('.card__front'));
-console.log(cards);
-cards.forEach((card, index) => {
+//console.log(cards);
+console.log(backFace);
+//console.log(frontFace);
+
+backFace.forEach((card) => {
     card.addEventListener('click', () => {
-        flipCardBack(card, index);
+        flipCard(card);
     });
 });
 
-// cardsFront.forEach(card => {
+// frontFace.forEach((card) => {
 //     card.addEventListener('click', () => {
-//         flipCardFront(card);
+//         reFlipCard(card);
 //     });
 // });
 
-function flipCardBack(card, index) {
-    console.log(card);
-    card.style.transform = "rotateY(-180deg)";
+function flipCard(card) {
+    console.log(event.target);
+    let mapIterator = backFaceCardMap.keys();
+    for (let i = 0; i < backFaceCardMap.size; i++) {
+        console.log(backFaceCardMap.values().next().value[i]);
+        console.log(cards[i].firstElementChild.firstElementChild);
+        if (backFaceCardMap.values().next().value[i] != cards[i].firstElementChild.firstElementChild) {
+            card.style.transform = "rotateY(-90deg)";
+            card.style.transition = "transform 500ms ease-out";
+            console.log(i);
 
-}
-// function flipCardFront(card) {
-//     card.style.transform = "rotateY(-180deg)";
+            setInterval(() => {
+                card.style.visibility = "hidden";
+            }, 1000);
 
+        }
+    }
+    //console.log(mapIterator.next().value[0]);
+
+
+
+};
+
+// function reFlipCard(card) {
+
+//     if (Array.from(frontFace.map((elements, index) => {
+//         elements == "goblinTarot"
+//     }))) {
+
+//         card.style.transform = "rotateY(90deg)";
+//         card.style.transition = "transform 500ms ease-out";
+//     }
 // }
 
 
-
 // da clock
-const time = document.querySelector('.clock');
 
-function addZero(i) {           // ott ahol lehet 10-nél kisebb az érték, ott legyen 0 előtagja a számnak (01,05,09 stb)
-    if (i < 10) {
-        i = "0" + i;
-    }
-    return i;
+
+const padNumbers = (num) => {
+    return num < 10 ? `0${num}` : `${num}`;
 }
 
-const startTimeObject = new Date();
 let ellapsedTime = 0;
-function dateForm() {
+let counterIsRunning = true;
+setInterval(() => {
+    if (!counterIsRunning) {
+        return;
+    }
+    ellapsedTime += 1;
+    let ellapsedTimeSeconds = padNumbers(ellapsedTime % 60);
+    let ellapsedTimeMinutes = padNumbers(Math.floor(ellapsedTime / 60));          // a floor lefelé kerekít (floor = padló)
+    const time = `${ellapsedTimeMinutes}:${ellapsedTimeSeconds}`;                 // a másik a Math.ceil()        (ceil mennyezet) fölfelé kerekít
+    const ellapsedTimeFace = document.querySelector('.clock');
+    ellapsedTimeFace.textContent = time;
+}, 1000);
 
-    const timeObject = new Date();
-    const shortLongForm = `${addZero(timeObject.getMinutes() - startTimeObject.getMinutes())}:${addZero(timeObject.getSeconds() - startTimeObject.getSeconds())}`;       // a toLocaleDateString-nek a 2. paramétere egy objektum, és ennek van egy month objektuma, aminek lehet short vagy long propertyje
-    time.textContent = shortLongForm;
+document.querySelector('.clock').addEventListener('click', () => {
+    if (counterIsRunning) {
+        counterIsRunning = false;
+        ellapsedTime = 0;
+    } else {
+        counterIsRunning = true;
 
-    ellapsedTime = (timeObject.getMinutes() - startTimeObject.getMinutes()) * 60 + (timeObject.getSeconds() - startTimeObject.getSeconds());
-    //return shortLongForm;
-}
-
-setInterval(dateForm, 1000);            // másodpercenként frissíti így
+    }
+})
