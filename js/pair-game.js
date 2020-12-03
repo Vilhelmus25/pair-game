@@ -8,6 +8,13 @@ const cards = Array.from(document.querySelectorAll('.card'));
 const backFace = Array.from(document.querySelectorAll('.card__back')).map((elements) => elements);
 const frontFace = Array.from(document.querySelectorAll('.card__front')).map((elements) => elements);
 
+let flipCounter = 0;
+let firstClick;
+let secondClick;
+const cardPositionStore = {
+    arr: [0, 0]
+};
+
 console.log(arrayToMap(backFace, backFaceCardMap));
 console.log(arrayToMap(frontFace, frontFaceCardMap));
 
@@ -18,11 +25,11 @@ function arrayToMap(arr, faceMap) {                                     // a tö
 //const cardsFront = Array.from(document.querySelectorAll('.card__front'));
 //console.log(cards);
 console.log(backFace);
-//console.log(frontFace);
+console.log(frontFace);
 
 backFace.forEach((card) => {
-    card.addEventListener('click', () => {
-        flipCard(card);
+    card.addEventListener('click', (event) => {
+        flipCard(card, event);
     });
 });
 
@@ -32,28 +39,59 @@ backFace.forEach((card) => {
 //     });
 // });
 
-function flipCard(card) {
-    console.log(event.target);
-    let mapIterator = backFaceCardMap.keys();
-    for (let i = 0; i < backFaceCardMap.size; i++) {
-        console.log(backFaceCardMap.values().next().value[i]);
-        console.log(cards[i].firstElementChild.firstElementChild);
-        if (backFaceCardMap.values().next().value[i] != cards[i].firstElementChild.firstElementChild) {
-            card.style.transform = "rotateY(-90deg)";
+function flipCard(card, event) {
+    //console.log(event.currentTarget.firstElementChild);
+    //let mapIterator = backFaceCardMap.keys();
+
+    for (let i = 0; i < cards.length; i++) {
+        //console.log(backFaceCardMap.values().next().value[i]);
+        //console.log(cards[i].childNodes[3].firstElementChild);              // azért childNodes[3], mert az tartalmazza a back__face div-et, de lehet lehet a black__face-el is cards helyett
+        if (cards[i].childNodes[3].firstElementChild == event.currentTarget.firstElementChild) {
+            backFace[i].style.transform = "rotateY(-90deg)";
             card.style.transition = "transform 500ms ease-out";
+            //console.log(event.currentTarget);
             console.log(i);
-
-            setInterval(() => {
-                card.style.visibility = "hidden";
-            }, 1000);
-
+            firstClick == undefined ? firstClick = i : secondClick = i;
+            flipCounter += 1;
+            i = cards.length;
         }
+
     }
-    //console.log(mapIterator.next().value[0]);
-
-
-
+    if (secondClick != undefined)                                   // csak akkor nézze, ha volt 2. felfordítás
+        checkMatch(firstClick, secondClick);
 };
+
+function checkMatch(first, second) {
+    const firstCard = cards[first].childNodes[1].firstElementChild.className;               // jaj de nehéz szülés volt így beazonosítani!!! A konzol sokat segített.
+    const secondCard = cards[second].childNodes[1].firstElementChild.className;             // a kattintott kártya childNodejai a divek és a textContentek, a [1]-es a frontface div. Annak az első gyereke (node-ja a firstElementChild adja vissza). Annak a node-nak van egy className propertyje, azok egyedik
+    const checkCards = {
+        firstCard,
+        secondCard,
+        // getFirstCard: function () {
+        //     return this.firstCard;
+        // },
+        // getSecondCard: function () {
+        //     return this.secondCard;
+        // }
+    }
+    console.log(Object.values(checkCards)[0]);
+    console.log(Object.values(checkCards)[1]);
+
+
+    if (Object.values(checkCards)[0] == Object.values(checkCards)[1]) {
+
+        firstClick = undefined;
+        secondClick = undefined;
+    } else {
+        backFace[first].style.transform = "rotateY(0deg)";
+        backFace[second].style.transform = "rotateY(360deg)";
+        backFace[first].style.transition = "transform 1000ms ease-in";
+        backFace[second].style.transition = "transform 1500ms ease-in";
+
+        firstClick = undefined;
+        secondClick = undefined;
+    }
+}
 
 // function reFlipCard(card) {
 
@@ -71,7 +109,7 @@ function flipCard(card) {
 
 
 const padNumbers = (num) => {
-    return num < 10 ? `0${num}` : `${num}`;
+    return num < 10 ? `0${num}` : `${num} `;
 }
 
 let ellapsedTime = 0;
