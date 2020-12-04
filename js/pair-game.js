@@ -13,9 +13,24 @@ let flipCounter = 0;
 let firstClick;
 let secondClick;
 
+let ellapsedTime = 0;
+let counterIsRunning = false;
 
-console.log(arrayToMap(backFace, backFaceCardMap));
-console.log(arrayToMap(frontFace, frontFaceCardMap));
+let gameTime = setInterval(() => {
+    if (!counterIsRunning) {
+        return;
+    }
+    ellapsedTime += 1;
+    let ellapsedTimeSeconds = padNumbers(ellapsedTime % 60);
+    let ellapsedTimeMinutes = padNumbers(Math.floor(ellapsedTime / 60));          // a floor lefelé kerekít (floor = padló)
+    const time = `${ellapsedTimeMinutes}:${ellapsedTimeSeconds}`;                 // a másik a Math.ceil()        (ceil mennyezet) fölfelé kerekít
+    const ellapsedTimeFace = document.querySelector('.clock');
+    ellapsedTimeFace.textContent = time;
+
+}, 1000);
+
+// console.log(arrayToMap(backFace, backFaceCardMap));
+// console.log(arrayToMap(frontFace, frontFaceCardMap));
 
 function arrayToMap(arr, faceMap) {                                     // a tömböt mapba teszi
     const tempArrayIndex = arr.map((elements, index) => index);
@@ -23,8 +38,8 @@ function arrayToMap(arr, faceMap) {                                     // a tö
 }
 //const cardsFront = Array.from(document.querySelectorAll('.card__front'));
 //console.log(cards);
-console.log(backFace);
-console.log(frontFace);
+// console.log(backFace);
+// console.log(frontFace);
 
 backFace.forEach((card) => {
     card.addEventListener('click', (event) => {
@@ -86,7 +101,7 @@ function checkMatch(first, second) {
     } else {
 
 
-        setInterval(() => {
+        setInterval(() => { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   Ez forgatja vissza, mert ez egy időzítő és a meghívástól folyamatosan csinálja     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             backFace[first].style.transform = "rotateY(0deg)";
             backFace[first].style.transition = "transform 1000ms ease-in";
         }, 1500);
@@ -117,6 +132,21 @@ const isGameWin = (matchCounter) => {
 
     return matchCounter == (cards.length / 2) ? false : true;
 };
+
+const padNumbers = (num) => {
+    return num < 10 ? `0${num}` : `${num} `;
+}
+
+// document.querySelector('.card').addEventListener('click', () => {               // ha az órára kattintunk, akkor tudjuk indítani/megállítani
+//     if (counterIsRunning) {
+//         counterIsRunning = false;
+//         ellapsedTime = 0;
+//     } else {
+//         counterIsRunning = true;
+
+//     }
+// })
+
 const gameRestart = () => {
 
     let delay = setInterval(() => {
@@ -128,35 +158,3 @@ const gameRestart = () => {
         ellapsedTimeFace.textContent = `00:00`;
     }
 }
-const padNumbers = (num) => {
-    return num < 10 ? `0${num}` : `${num} `;
-}
-
-let ellapsedTime = 0;
-let counterIsRunning = false;
-
-let gameTime = setInterval(() => {
-    if (!counterIsRunning) {
-        return;
-    }
-    ellapsedTime += 1;
-    let ellapsedTimeSeconds = padNumbers(ellapsedTime % 60);
-    let ellapsedTimeMinutes = padNumbers(Math.floor(ellapsedTime / 60));          // a floor lefelé kerekít (floor = padló)
-    const time = `${ellapsedTimeMinutes}:${ellapsedTimeSeconds}`;                 // a másik a Math.ceil()        (ceil mennyezet) fölfelé kerekít
-    const ellapsedTimeFace = document.querySelector('.clock');
-    ellapsedTimeFace.textContent = time;
-
-}, 1000);
-
-
-
-
-// document.querySelector('.card').addEventListener('click', () => {               // ha az órára kattintunk, akkor tudjuk indítani/megállítani
-//     if (counterIsRunning) {
-//         counterIsRunning = false;
-//         ellapsedTime = 0;
-//     } else {
-//         counterIsRunning = true;
-
-//     }
-// })
