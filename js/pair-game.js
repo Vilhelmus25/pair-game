@@ -16,9 +16,19 @@ let secondClick;
 let ellapsedTime = 0;
 let counterIsRunning = false;
 
-const gameTime = () => {
-    setInterval(() => {
-        if (!counterIsRunning) {
+let gameTimeIsRunning = null;
+
+function gameTimeModeSelector(isRunning, doTimer, time){
+    if(!isRunning){
+        clearInterval(gameTimeIsRunning);
+    }
+    else{
+        gameTimeIsRunning = setInterval(doTimer,time);
+    }
+}
+    let doTimer = () => {
+
+        if(!counterIsRunning){     
             return;
         }
         ellapsedTime += 1;
@@ -28,8 +38,8 @@ const gameTime = () => {
 
         ellapsedTimeFace.textContent = time;
 
-    }, 1000);
-}
+    }
+
 // console.log(arrayToMap(backFace, backFaceCardMap));
 // console.log(arrayToMap(frontFace, frontFaceCardMap));
 
@@ -60,8 +70,9 @@ function flipCard(card, event) {
     counterIsRunning = true;
     flipCounter += 1;
     if (flipCounter === 1) {
-        gameTime();                             // !!!!!!!!!!!!!!!!!!!!!!!!!!!              sajnos az újraindítás után 2-szeresen megy az óra           !!!!!!!!!!!!!!!!!!
+        gameTimeModeSelector(counterIsRunning,doTimer,1000);    // az első kattintásra induljon
     }
+                      // !!!!!!!!!!!!!!!!!!!!!!!!!!!              sajnos az újraindítás után 2-szeresen megy az óra           !!!!!!!!!!!!!!!!!!
 
     for (let i = 0; i < cards.length; i++) {
         //console.log(backFaceCardMap.values().next().value[i]);
@@ -98,7 +109,8 @@ function checkMatch(first, second) {
         secondClick = undefined;
         counterIsRunning = isGameWin(matchCounter);                     // itt mindig megnézzük vége van-e a játéknak
         if (!counterIsRunning) {                                        // ha megáll a számláló
-            clearInterval(gameTime);                                    // ez állítja meg az órát
+            //clearInterval(gameTime);                                    // ez állítja meg az órát
+            gameTimeModeSelector(counterIsRunning, doTimer, 0);     // itt false-t kap, ezért törli az előző számlálót
             gameRestart();                                              // újraindítja a játékot 5 sec után
         }
     } else {
@@ -147,6 +159,6 @@ const gameRestart = () => {
 
     ellapsedTime = 0;
     counterIsRunning = false;
-
+    gameTimeIsRunning = null;
 
 }
