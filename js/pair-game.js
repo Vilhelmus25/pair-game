@@ -3,11 +3,42 @@
 
 //const backFaceCardMap = new Map();
 //const frontFaceCardMap = new Map();
-
-const cards = Array.from(document.querySelectorAll('.card'));
+const cardContainer = Array.from(document.querySelectorAll('.card__front'));
+let cards = Array.from(document.querySelectorAll('.card'));
+const oldCards = Array.from(document.querySelectorAll('.card'));
 const backFace = Array.from(document.querySelectorAll('.card__back')).map((elements) => elements);
 const frontFace = Array.from(document.querySelectorAll('.card__front')).map((elements) => elements);
 const ellapsedTimeFace = document.querySelector('.clock');
+
+
+
+
+// let currentIndex = cards.length;
+// let tempElement;
+// let randomIndex;
+// let newNode;
+// let oldNode;
+
+// console.log(cardContainer);
+// cards.map((elements, index) => {
+//     randomIndex = Math.floor(Math.random() * index);
+//     currentIndex -= 1;
+//     console.log(randomIndex);                                   // !!!!!!!!!!!!!  Gond van ezzel            !!!!!!!!!!
+
+//     tempElement = cards[currentIndex];
+//     cards[currentIndex] = cards[randomIndex];
+//     cards[randomIndex] = tempElement;
+
+//     newNode = cardContainer[randomIndex];
+//     oldNode = cardContainer[currentIndex];
+//     cardContainer[currentIndex].replaceWith(cardContainer[randomIndex]);            // !!!!!!!!!!!!!    lehet ez sem tökéletes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//     //cardContainer.map(elements.replaceChild(cards[randomIndex], cards[currentIndex]));
+//     // return cards;
+// });
+
+
+
+
 
 let matchCounter = 0;
 let flipCounter = 0;
@@ -18,27 +49,27 @@ let counterIsRunning = false;
 
 let gameTimeIsRunning = null;
 
-function gameTimeModeSelector(isRunning, doTimer, time){
-    if(!isRunning){
+function gameTimeModeSelector(isRunning, doTimer, time) {
+    if (!isRunning) {
         clearInterval(gameTimeIsRunning);
     }
-    else{
-        gameTimeIsRunning = setInterval(doTimer,time);
+    else {
+        gameTimeIsRunning = setInterval(doTimer, time);
     }
 }
-    let doTimer = () => {
+let doTimer = () => {
 
-        if(!counterIsRunning){     
-            return;
-        }
-        ellapsedTime += 1;
-        let ellapsedTimeSeconds = padNumbers(ellapsedTime % 60);
-        let ellapsedTimeMinutes = padNumbers(Math.floor(ellapsedTime / 60));          // a floor lefelé kerekít (floor = padló)
-        const time = `${ellapsedTimeMinutes}:${ellapsedTimeSeconds}`;                 // a másik a Math.ceil()        (ceil mennyezet) fölfelé kerekít
-
-        ellapsedTimeFace.textContent = time;
-
+    if (!counterIsRunning) {
+        return;
     }
+    ellapsedTime += 1;
+    let ellapsedTimeSeconds = padNumbers(ellapsedTime % 60);
+    let ellapsedTimeMinutes = padNumbers(Math.floor(ellapsedTime / 60));          // a floor lefelé kerekít (floor = padló)
+    const time = `${ellapsedTimeMinutes}:${ellapsedTimeSeconds}`;                 // a másik a Math.ceil()        (ceil mennyezet) fölfelé kerekít
+
+    ellapsedTimeFace.textContent = time;
+
+}
 
 // console.log(arrayToMap(backFace, backFaceCardMap));
 // console.log(arrayToMap(frontFace, frontFaceCardMap));
@@ -70,9 +101,9 @@ function flipCard(card, event) {
     counterIsRunning = true;
     flipCounter += 1;
     if (flipCounter === 1) {
-        gameTimeModeSelector(counterIsRunning,doTimer,1000);    // az első kattintásra induljon
+        gameTimeModeSelector(counterIsRunning, doTimer, 1000);    // az első kattintásra induljon
     }
-                      // !!!!!!!!!!!!!!!!!!!!!!!!!!!              sajnos az újraindítás után 2-szeresen megy az óra           !!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!              sajnos az újraindítás után 2-szeresen megy az óra           !!!!!!!!!!!!!!!!!!
 
     for (let i = 0; i < cards.length; i++) {
         //console.log(backFaceCardMap.values().next().value[i]);
