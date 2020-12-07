@@ -1,8 +1,48 @@
 'use strict';
 
 
-//const backFaceCardMap = new Map();
-//const frontFaceCardMap = new Map();
+const startImages = ['gladius',
+    'goblinTarot',
+    'heavenAndHell',
+    'dragons',
+    'endora',
+];
+
+let images = startImages.concat(startImages);
+
+const cardShuffler = (function () {
+    let container = document.createElement('div');
+    container.classList.add('card__container');
+    let card = document.createElement('div');
+    document.body.appendChild(container);
+    //container.appendChild(card);
+    //showCards
+    const getOneCard = (image, index) => {
+        card = document.createElement('div');
+        container.appendChild(card);
+        card.classList.add('card');
+
+        card.innerHTML = `
+                   <div class="card__front card__face">
+                       <img src="./assets/images/${image}.jpg" alt="${image}" class="${image}">
+                   </div>
+                   <div class="card__back card__face">
+                       <img src="./assets/images/creator.jpg" alt="Creator" class="creator--${index}">
+                   </div>`;
+
+        return card;
+    }
+    images = shuffle(images);
+
+    for (let i = 0; i < images.length; i += 1) {
+        console.log(getOneCard(images[i], i));
+    }
+
+    return getOneCard;
+
+})();
+
+
 const cardContainer = Array.from(document.querySelectorAll('.card__front'));
 let cards = Array.from(document.querySelectorAll('.card'));
 const oldCards = Array.from(document.querySelectorAll('.card'));
@@ -10,34 +50,45 @@ const backFace = Array.from(document.querySelectorAll('.card__back')).map((eleme
 const frontFace = Array.from(document.querySelectorAll('.card__front')).map((elements) => elements);
 const ellapsedTimeFace = document.querySelector('.clock');
 
+const cardContainerIndices = cardContainer.map((elements, index) => index);
+const cardSet = new Map();
+console.log();
 
+// function randomIndexSelector(indexArray) {
+//     let i = 0;
+//     let tempSize = 0;
+//     let randomNumber = 0;
 
+//     while (cardSet.size != cardContainerIndices.length) {
+//         randomNumber = Math.trunc(Math.random() * 10);
+//         if (randomNumber < cardContainerIndices.length + 1) {
 
-// let currentIndex = cards.length;
-// let tempElement;
-// let randomIndex;
-// let newNode;
-// let oldNode;
+//             cardSet.set(indexArray[randomNumber], cards[i]);
+//             if (tempSize != cardSet.size) {
+//                 console.log(cardSet);
+//                 i += 1;
+//                 tempSize += 1;
+//             }
+//         }
+//     }
+//     return cardSet;
+// }
+//randomIndexSelector(cardContainerIndices);
 
-// console.log(cardContainer);
-// cards.map((elements, index) => {
-//     randomIndex = Math.floor(Math.random() * index);
-//     currentIndex -= 1;
-//     console.log(randomIndex);                                   // !!!!!!!!!!!!!  Gond van ezzel            !!!!!!!!!!
+function shuffle(array) {
+    let currentIndex = array.length, tempElement, randomIndex;
 
-//     tempElement = cards[currentIndex];
-//     cards[currentIndex] = cards[randomIndex];
-//     cards[randomIndex] = tempElement;
+    while (0 !== currentIndex) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
 
-//     newNode = cardContainer[randomIndex];
-//     oldNode = cardContainer[currentIndex];
-//     cardContainer[currentIndex].replaceWith(cardContainer[randomIndex]);            // !!!!!!!!!!!!!    lehet ez sem tökéletes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//     //cardContainer.map(elements.replaceChild(cards[randomIndex], cards[currentIndex]));
-//     // return cards;
-// });
+        tempElement = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = tempElement;
 
-
-
+    }
+    return array;
+};
 
 
 let matchCounter = 0;
@@ -97,13 +148,12 @@ backFace.forEach((card) => {
 
 function flipCard(card, event) {
     //console.log(event.currentTarget.firstElementChild);
-    //let mapIterator = backFaceCardMap.keys();
+
     counterIsRunning = true;
     flipCounter += 1;
     if (flipCounter === 1) {
         gameTimeModeSelector(counterIsRunning, doTimer, 1000);    // az első kattintásra induljon
     }
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!              sajnos az újraindítás után 2-szeresen megy az óra           !!!!!!!!!!!!!!!!!!
 
     for (let i = 0; i < cards.length; i++) {
         //console.log(backFaceCardMap.values().next().value[i]);
