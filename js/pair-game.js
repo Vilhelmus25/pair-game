@@ -1,21 +1,22 @@
 'use strict';
 
-
-const startImages = ['gladius',
+const startImages = [
+    'gladius',
     'goblinTarot',
     'heavenAndHell',
     'dragons',
     'endora',
 ];
 
-let images = startImages.concat(startImages);
+let images = startImages.concat(startImages);           // duplikáljuk a front-kártyákat
 
-const cardShuffler = (function () {
-    let container = document.createElement('div');
-    container.classList.add('card__container');
-    let card = document.createElement('div');
-    document.body.appendChild(container);
-    //container.appendChild(card);
+const cardShuffler = (function () {                     //  IIFE !
+    let container = document.createElement('div');      // létrehozunk egy div-et
+    container.classList.add('card__container');         // megadjuk neki a 'card__container'  className-t
+    let card;
+    document.body.appendChild(container);               // a 'card__container' osztályt a body leszármazottává tessszük
+
+
     //showCards
     const getOneCard = (image, index) => {
         card = document.createElement('div');
@@ -51,31 +52,18 @@ const frontFace = Array.from(document.querySelectorAll('.card__front')).map((ele
 const ellapsedTimeFace = document.querySelector('.clock');
 
 const cardContainerIndices = cardContainer.map((elements, index) => index);
-const cardSet = new Map();
-console.log();
 
-// function randomIndexSelector(indexArray) {
-//     let i = 0;
-//     let tempSize = 0;
-//     let randomNumber = 0;
+let matchCounter = 0;
+let flipCounter = 0;
+let firstClick;
+let secondClick;
+let ellapsedTime = 0;
+let counterIsRunning = false;
 
-//     while (cardSet.size != cardContainerIndices.length) {
-//         randomNumber = Math.trunc(Math.random() * 10);
-//         if (randomNumber < cardContainerIndices.length + 1) {
+let gameTimeIsRunning = null;
 
-//             cardSet.set(indexArray[randomNumber], cards[i]);
-//             if (tempSize != cardSet.size) {
-//                 console.log(cardSet);
-//                 i += 1;
-//                 tempSize += 1;
-//             }
-//         }
-//     }
-//     return cardSet;
-// }
-//randomIndexSelector(cardContainerIndices);
 
-function shuffle(array) {
+function shuffle(array) {                                           // összekeverjük a kártyafront típusokat, hogy random legyen
     let currentIndex = array.length, tempElement, randomIndex;
 
     while (0 !== currentIndex) {
@@ -91,15 +79,6 @@ function shuffle(array) {
 };
 
 
-let matchCounter = 0;
-let flipCounter = 0;
-let firstClick;
-let secondClick;
-let ellapsedTime = 0;
-let counterIsRunning = false;
-
-let gameTimeIsRunning = null;
-
 function gameTimeModeSelector(isRunning, doTimer, time) {
     if (!isRunning) {
         clearInterval(gameTimeIsRunning);
@@ -108,7 +87,7 @@ function gameTimeModeSelector(isRunning, doTimer, time) {
         gameTimeIsRunning = setInterval(doTimer, time);
     }
 }
-let doTimer = () => {
+const doTimer = () => {
 
     if (!counterIsRunning) {
         return;
@@ -122,17 +101,10 @@ let doTimer = () => {
 
 }
 
-// console.log(arrayToMap(backFace, backFaceCardMap));
-// console.log(arrayToMap(frontFace, frontFaceCardMap));
-
 function arrayToMap(arr, faceMap) {                                                 // a tömböt mapba teszi
     const tempArrayIndex = arr.map((elements, index) => index);
     return faceMap.set(tempArrayIndex, arr);
 }
-//const cardsFront = Array.from(document.querySelectorAll('.card__front'));
-//console.log(cards);
-// console.log(backFace);
-// console.log(frontFace);
 
 backFace.forEach((card) => {
     card.addEventListener('click', (event) => {
@@ -140,15 +112,15 @@ backFace.forEach((card) => {
     });
 });
 
-// frontFace.forEach((card) => {
-//     card.addEventListener('click', () => {
-//         reFlipCard(card);
-//     });
-// });
+
+let blockClicks = false;
 
 function flipCard(card, event) {
     //console.log(event.currentTarget.firstElementChild);
 
+    if (blockClicks) {
+        return;
+    }
     counterIsRunning = true;
     flipCounter += 1;
     if (flipCounter === 1) {
@@ -190,21 +162,22 @@ function checkMatch(first, second) {
         secondClick = undefined;
         counterIsRunning = isGameWin(matchCounter);                     // itt mindig megnézzük vége van-e a játéknak
         if (!counterIsRunning) {                                        // ha megáll a számláló
-            //clearInterval(gameTime);                                    // ez állítja meg az órát
-            gameTimeModeSelector(counterIsRunning, doTimer, 0);     // itt false-t kap, ezért törli az előző számlálót
+            gameTimeModeSelector(counterIsRunning, doTimer, 0);         // itt false-t kap, ezért törli az előző számlálót
             gameRestart();                                              // újraindítja a játékot 5 sec után
         }
     } else {
 
+        blockClicks = true;                                                     // Ez gátolja meg, hogy ne lehessen kattintani amikor 2-őt felfordítottunk
 
-        setTimeout(() => {                                              // setTimeout az időzítő (sleep)
+        setTimeout(() => {                                                      // setTimeout az időzítő (sleep)
             backFace[first].style.transform = "rotateY(0deg)";                  // ez visszaforgatja
-            backFace[first].style.transition = "transform 1000ms ease-in";
-        }, 2000);                                                               // 2 sec-ig várunk, mielőtt visszaforgatjuk
+            backFace[first].style.transition = "transform 750ms ease-in";
+        }, 1500);                                                               // 2 sec-ig várunk, mielőtt visszaforgatjuk
         setTimeout(() => {
             backFace[second].style.transform = "rotateY(0deg)";                 // ez visszaforgatja
-            backFace[second].style.transition = "transform 1000ms ease-in";
-        }, 2000);
+            backFace[second].style.transition = "transform 750ms ease-in";
+            blockClicks = false;
+        }, 1500);
 
         firstClick = undefined;
         secondClick = undefined;
@@ -219,7 +192,6 @@ const isGameWin = (matchCounter) => {
 const padNumbers = (num) => {
     return num < 10 ? `0${num}` : `${num}`;
 }
-
 
 const gameRestart = () => {
 
