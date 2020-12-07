@@ -36,7 +36,7 @@ const cardShuffler = (function () {                     //  IIFE !
     images = shuffle(images);
 
     for (let i = 0; i < images.length; i += 1) {
-        console.log(getOneCard(images[i], i));
+        getOneCard(images[i], i);
     }
 
     return getOneCard;
@@ -152,9 +152,8 @@ function checkMatch(first, second) {
         firstCard,                      //  property-shorthand!!!
         secondCard,
     }
-    console.log(Object.values(checkCards)[0]);
-    console.log(Object.values(checkCards)[1]);
-
+    // console.log(Object.values(checkCards)[0]);
+    // console.log(Object.values(checkCards)[1]);
 
     if (Object.values(checkCards)[0] == Object.values(checkCards)[1]) {
         matchCounter += 1;
