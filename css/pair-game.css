@@ -59,8 +59,8 @@ body{
 }
 
 .card .card__back:hover{
-    opacity: 0.85;
-    transition: opacity 0.1 ease-in-out;
+    box-shadow: 0px 0px 5px #f7aa06;
+    transition: boxshadow 0.1 ease-in-out;
 }
 
 .card__face{

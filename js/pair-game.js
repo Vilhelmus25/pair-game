@@ -7,51 +7,21 @@ const startImages = [
     'dragons',
     'endora',
 ];
+let isRestart = false;
+let container = document.createElement('div');      // létrehozunk egy div-et
+container.classList.add('card__container');         // megadjuk neki a 'card__container'  className-t
+let cardDiv;
+document.body.appendChild(container);               // a 'card__container' osztályt a body leszármazottává tessszük
 
 let images = startImages.concat(startImages);           // duplikáljuk a front-kártyákat
 
-const cardShuffler = (function () {                     //  IIFE !
-    let container = document.createElement('div');      // létrehozunk egy div-et
-    container.classList.add('card__container');         // megadjuk neki a 'card__container'  className-t
-    let card;
-    document.body.appendChild(container);               // a 'card__container' osztályt a body leszármazottává tessszük
+let cardContainer;
+let cards;
+let backFace;
+let frontFace;
+let ellapsedTimeFace;;
 
-
-    //showCards
-    const getOneCard = (image, index) => {
-        card = document.createElement('div');
-        container.appendChild(card);
-        card.classList.add('card');
-
-        card.innerHTML = `
-                   <div class="card__front card__face">
-                       <img src="./assets/images/${image}.jpg" alt="${image}" class="${image}">
-                   </div>
-                   <div class="card__back card__face">
-                       <img src="./assets/images/creator.jpg" alt="Creator" class="creator--${index}">
-                   </div>`;
-
-        return card;
-    }
-    images = shuffle(images);
-
-    for (let i = 0; i < images.length; i += 1) {
-        getOneCard(images[i], i);
-    }
-
-    return getOneCard;
-
-})();
-
-
-const cardContainer = Array.from(document.querySelectorAll('.card__front'));
-let cards = Array.from(document.querySelectorAll('.card'));
-const oldCards = Array.from(document.querySelectorAll('.card'));
-const backFace = Array.from(document.querySelectorAll('.card__back')).map((elements) => elements);
-const frontFace = Array.from(document.querySelectorAll('.card__front')).map((elements) => elements);
-const ellapsedTimeFace = document.querySelector('.clock');
-
-const cardContainerIndices = cardContainer.map((elements, index) => index);
+let blockClicks = false;
 
 let matchCounter = 0;
 let flipCounter = 0;
@@ -61,6 +31,50 @@ let ellapsedTime = 0;
 let counterIsRunning = false;
 
 let gameTimeIsRunning = null;
+
+function initGame() {               // a játék indító
+    cardShuffler();
+    querySelelctorForCards();
+    eventlistenerAdder();
+}
+
+function cardShuffler() {                       // a kártyák létrehozása a html-be
+
+    images = shuffle(images);                   // keverés
+
+    //showCards
+    function getOneCard(image, index) {                             // itt hozza létre a kártyákat a html-ben
+        cardDiv = document.createElement('div');
+        container.appendChild(cardDiv);
+        cardDiv.classList.add('card');
+
+        cardDiv.innerHTML = `
+                   <div class="card__front card__face">
+                       <img src="./assets/images/${image}.jpg" alt="${image}" class="${image}">
+                   </div>
+                   <div class="card__back card__face">
+                       <img src="./assets/images/creator.jpg" alt="Creator" class="creator--${index}">
+                   </div>`;
+
+        return cardDiv;
+    }
+
+
+    for (let i = 0; i < images.length; i += 1) {
+        getOneCard(images[i], i);                                       // itt kapja meg a képeket
+    }
+    return getOneCard;
+
+};
+
+function querySelelctorForCards() {                                             // a queryselectorokat egy fv-be rakom, hogy később is elérhető legyen
+    cardContainer = Array.from(document.querySelectorAll('.card__front'));
+    cards = Array.from(document.querySelectorAll('.card'));
+    backFace = Array.from(document.querySelectorAll('.card__back')).map((elements) => elements);
+    frontFace = Array.from(document.querySelectorAll('.card__front')).map((elements) => elements);
+    ellapsedTimeFace = document.querySelector('.clock');
+
+}
 
 
 function shuffle(array) {                                           // összekeverjük a kártyafront típusokat, hogy random legyen
@@ -79,7 +93,7 @@ function shuffle(array) {                                           // összekev
 };
 
 
-function gameTimeModeSelector(isRunning, doTimer, time) {
+function gameTimeModeSelector(isRunning, doTimer, time) {       // idő számláló
     if (!isRunning) {
         clearInterval(gameTimeIsRunning);
     }
@@ -100,25 +114,20 @@ const doTimer = () => {
     ellapsedTimeFace.textContent = time;
 
 }
+function eventlistenerAdder() {                             // kattintás eseményfigyelő a hátlapra
 
-function arrayToMap(arr, faceMap) {                                                 // a tömböt mapba teszi
-    const tempArrayIndex = arr.map((elements, index) => index);
-    return faceMap.set(tempArrayIndex, arr);
+    backFace.forEach((card) => {
+        card.addEventListener('click', (event) => {
+            flipCard(card, event);
+        });
+    });
 }
 
-backFace.forEach((card) => {
-    card.addEventListener('click', (event) => {
-        flipCard(card, event);
-    });
-});
-
-
-let blockClicks = false;
 
 function flipCard(card, event) {
     //console.log(event.currentTarget.firstElementChild);
 
-    if (blockClicks) {
+    if (blockClicks) {                      // blokkolja a kattintást, ha egyszerre kettő van felfordítva
         return;
     }
     counterIsRunning = true;
@@ -131,6 +140,7 @@ function flipCard(card, event) {
         //console.log(backFaceCardMap.values().next().value[i]);
         //console.log(cards[i].childNodes[3].firstElementChild);              // azért childNodes[3], mert az tartalmazza a back__face div-et, de lehet lehet a black__face-el is cards helyett
         if (cards[i].childNodes[3].firstElementChild == event.currentTarget.firstElementChild) {
+
             backFace[i].style.transform = "rotateY(-90deg)";
             card.style.transition = "transform 750ms ease-out";
             //console.log(event.currentTarget);
@@ -202,8 +212,18 @@ const gameRestart = () => {
             backFace[i].style.transform = "rotateY(0deg)";
             backFace[i].style.transition = "transform 1000ms ease-in";
         }
+        isRestart = true;
+        if (isRestart) {
+            while (container.firstChild) {                                  // kitöröljük a lapokat a html-ből
+                container.removeChild(container.lastChild);
+            }
+            isRestart = false;
+        }
+
+        initGame();     // újraindítjuk a játékot, miután töröltünk
     }, 5000);
 
+    // 0-ára állítunk valamennyi változót
     matchCounter = 0;
     flipCounter = 0;
     firstClick = null;
@@ -212,5 +232,7 @@ const gameRestart = () => {
     ellapsedTime = 0;
     counterIsRunning = false;
     gameTimeIsRunning = null;
+    blockClicks = false;
 
 }
+initGame();             // az első indításhoz
